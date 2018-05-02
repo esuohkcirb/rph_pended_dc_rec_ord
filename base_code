@@ -39,11 +39,9 @@ select vroh.order_med_id from V_RX_ORDER_HISTORY vroh
 join v_rx_order vro on vro.ORDER_MED_ID=vroh.ORDER_MED_ID
 join ORDER_DISP_INFO odi on odi.ORDER_MED_ID=vroh.ORDER_MED_ID and odi.CONTACT_DATE_REAL=vroh.CONTACT_DATE_REAL
 where vroh.contact_TYPE_C=7
-and vro.PAT_ENC_CSN_ID=1970156116336
 and odi.admin_dispdatreal is null
 )
 --and lower(vro.MEDICATION_NAMe) like '%sodium chloride%'
---and vroh.ORDER_MED_ID =77046340
 and vro.ONE_STEP_MED_YN='Y'
 order by vroh.order_med_id,vroh.contact_type_c, vroh.CONTACT_DATE_REAL
 
