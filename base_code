@@ -1,0 +1,50 @@
+select 
+vroh.order_med_id vroh_order_med_id,
+vroh.CONTACT_DATE_REAL vroh_CONTACT_DATE_REAL,
+odi.CONTACT_DATE_REAL disp_CONTACT_DATE_REAL,
+--vroh.ACTION_DTTM,
+--vroh.ACTION_DATE,
+--vroh.ACTION_TYPE,
+--vroh.DEST_DEPARTMENT_ID,
+vro.MEDICATION_NAME,
+vro.ON_THE_FLY_YN,
+vro.ONE_STEP_MED_YN,
+vroh.PHARMACY_ID vroh_PHARMACY_ID,
+rp2.pharmacy_name,
+odi.DISPENSE_PHR_ID,
+rp.PHARMACY_NAME dispense_pharmacy,
+zoct.NAME zoct_admin_name,
+--vroh.dispense_code_c,
+--vroh.dispense_type_c
+odi.disp_med_cntct_id,
+odi.VERIFY_CONTDATREAL adm_VERIFY_CONTDATREAL,
+--odi.RETURN_CNCTDATREAL disp_RETURN_CNCTDATREAL,
+odi.ADMIN_DISPDATREAL,
+zos.NAME order_source
+--,odi2.*
+--,odi.*
+,omi.*
+from V_RX_ORDER_HISTORY vroh
+left join v_rx_order vro on vro.ORDER_MED_ID=vroh.ORDER_MED_ID
+left join order_medinfo omi on omi.order_med_id=vroh.order_med_id
+left join order_disp_info odi on odi.order_med_id=vroh.order_med_id and odi.contact_date_real=vroh.contact_date_real
+left join ORDER_DISP_INFO_2 odi2 on odi2.order_id=vroh.order_med_id and odi2.contact_date_real=vroh.contact_date_real
+left join rx_phr rp2 on rp2.pharmacy_id=vroh.PHARMACY_ID
+left join rx_phr rp on rp.pharmacy_id=odi.DISPENSE_PHR_ID
+join zc_ord_cntct_type zoct on zoct.contact_type_c=vroh.CONTACT_TYPE_C
+join ZC_ORDER_SOURCE zos on zos.order_source_c=omi.order_source_c
+where 
+vroh.order_med_id in (
+select vroh.order_med_id from V_RX_ORDER_HISTORY vroh
+join v_rx_order vro on vro.ORDER_MED_ID=vroh.ORDER_MED_ID
+join ORDER_DISP_INFO odi on odi.ORDER_MED_ID=vroh.ORDER_MED_ID and odi.CONTACT_DATE_REAL=vroh.CONTACT_DATE_REAL
+where vroh.contact_TYPE_C=7
+and vro.PAT_ENC_CSN_ID=1970156116336
+and odi.admin_dispdatreal is null
+)
+--and lower(vro.MEDICATION_NAMe) like '%sodium chloride%'
+--and vroh.ORDER_MED_ID =77046340
+and vro.ONE_STEP_MED_YN='Y'
+order by vroh.order_med_id,vroh.contact_type_c, vroh.CONTACT_DATE_REAL
+
+--select top 10 * from order_disp_info_2
